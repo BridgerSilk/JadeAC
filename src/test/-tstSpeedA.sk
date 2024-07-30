@@ -1,0 +1,66 @@
+on join:
+    set {jade.db.player.%player%.lastpos} to location of player
+
+on vehicle exit:
+    set {maxSpeed.tmp.%player%} to 9999
+    wait 5 ticks
+    delete {maxSpeed.tmp.%player%}
+
+on vehicle enter:
+    set {maxSpeed.tmp.%player%} to 9999
+    wait 5 ticks
+    delete {maxSpeed.tmp.%player%}
+
+on player move:
+    if player's gamemode is survival or adventure:
+        if player does not have permission "jade.perm.bypass" or "jade.admin":
+            set {_last} to {jade.db.player.%player%.lastpos}
+            set {_current} to location of player
+            set {_distance} to distance between {_last} and {_current}
+
+            set {_maxSpeed} to 0.1
+
+            if player is sneaking:
+                set {_maxSpeed} to 0.1
+
+            if player is sprinting:
+                set {_maxSpeed} to 0.34
+
+            if block below player is ice or packed ice or blue ice:
+                set {_maxSpeed} to {_maxSpeed} * 1.1
+                
+            if the vehicle of player is set:
+                set {_maxSpeed} to 99
+
+            if player is in lava:
+                set {_maxSpeed} to {_maxSpeed} * 0.5
+
+            if player is in water:
+                set {_maxSpeed} to {_maxSpeed} * 0.5
+
+            if player has potion speed:
+                set {_speedLevel} to level of speed of player
+                set {_speedMultiplier} to 1 + (0.2 * {_speedLevel})
+                set {_maxSpeed} to {_maxSpeed} * {_speedMultiplier}
+
+            if player has potion slowness:
+                set {_slownessLevel} to level of slowness of player
+                set {_slownessMultiplier} to 1 - (0.15 * {_slownessLevel})
+                set {_maxSpeed} to {_maxSpeed} * {_slownessMultiplier}
+
+            if {maxSpeed.tmp.%player%} is set:
+                set {_maxSpeed} to {maxSpeed.tmp.%player%}
+
+            set {_yDistance} to difference between y-coordinate of {_last} and y-coordinate of {_current}
+            if {_yDistance} > 0:
+                set {_distance} to sqrt({_distance}^2 - {_yDistance}^2)
+                
+            set {_tolerance} to 0.3
+            set {_maxSpeed} to {_maxSpeed} + {_tolerance}
+
+            if {_distance} > {_maxSpeed}:
+                cancel event
+                send "&c[AntiCheat] Speed hacking detected!" to player
+                send "&c[AntiCheat] %player% was detected for speed hacking!" to all players
+
+            set {jade.db.player.%player%.lastpos} to {_current}

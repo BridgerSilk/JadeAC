@@ -1,0 +1,3 @@
+# c stands for the specific check
+function addViolation(p: player, c: text):
+    add 1 to {jade.db.player.%{_p}%.violations::%{_c}%}

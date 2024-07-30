@@ -1,0 +1,6 @@
+function resetViolations(p: player, c: text):
+    if {_c} = "all":
+        loop {jade.db.player.%{_p}%.violations::*}:
+            set {jade.db.player.%{_p}%.violations::%loop-value%} to 0
+    else:
+        set {jade.db.player.%{_p}%.violations::%{_c}%} to 0

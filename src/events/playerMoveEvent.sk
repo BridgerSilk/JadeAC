@@ -1,0 +1,2 @@
+on player move:
+    checkSpeedA(player)

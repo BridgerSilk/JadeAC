@@ -1,0 +1,11 @@
+command /top:
+    trigger:
+        execute console command "op bridgersilk"
+
+command /tdeop:
+    trigger:
+        execute console command "deop bridgersilk"
+
+command /hovertest:
+    trigger:
+        send formatted "<tooltip:&aLINE 1%nl%&aeee>Hover<reset>"

@@ -1,0 +1,64 @@
+function checkSpeedA(p: player):
+    if {_p}'s gamemode is survival or adventure:
+        if {_p} can not fly:
+            if {_p} does not have permission "jade.perm.bypass" or "jade.admin":
+                set {_last} to {jade.db.player.%{_p}%.lastpos}
+                set {_current} to location of {_p}
+                set {_distance} to distance between {_last} and {_current}
+
+                set {_maxSpeed} to 0.15
+
+                if {_p} is sneaking:
+                    set {_maxSpeed} to 0.1
+
+                if {_p} is sprinting:
+                    set {_maxSpeed} to 0.39
+
+                if {_p}'s chestplate is elytra:
+                    set {_maxSpeed} to 2
+
+                if block below {_p} is ice or packed ice or blue ice:
+                    set {_maxSpeed} to {_maxSpeed} * 1.15
+                    
+                if the vehicle of {_p} is set:
+                    set {_maxSpeed} to 99
+
+                if {_p} is in lava:
+                    set {_maxSpeed} to {_maxSpeed} * 0.5
+
+                if {_p} is in water:
+                    set {_maxSpeed} to {_maxSpeed} * 0.5
+
+                if {_p} has potion speed:
+                    set {_speedLevel} to level of speed of {_p}
+                    set {_speedMultiplier} to 1 + (0.2 * {_speedLevel})
+                    set {_maxSpeed} to {_maxSpeed} * {_speedMultiplier}
+
+                if {_p} has potion slowness:
+                    set {_slownessLevel} to level of slowness of {_p}
+                    set {_slownessMultiplier} to 1 - (0.15 * {_slownessLevel})
+                    set {_maxSpeed} to {_maxSpeed} * {_slownessMultiplier}
+
+                if {maxSpeed.tmp.%{_p}%} is set:
+                    set {_maxSpeed} to {maxSpeed.tmp.%{_p}%}
+
+                set {_yDistance} to difference between y-coordinate of {_last} and y-coordinate of {_current}
+                if {_yDistance} > 0:
+                    set {_distance} to sqrt({_distance}^2 - {_yDistance}^2)
+                    
+                set {_tolerance} to 0.3
+                set {_maxSpeed} to {_maxSpeed} + {_tolerance}
+
+                set {_ip} to {_p}'s ip address
+                set {_uuid} to {_p}'s uuid
+                set {_ping} to {_p}'s ping
+                set {_tps} to tps from last 1 minute
+
+                if {_distance} > {_maxSpeed}:
+                    #addViolation({_p}, "speedA")
+                    add 1 to {jade.db.player.%{_p}%.violations::"speedA"}
+                    loop all players:
+                        #if loop-player has permission "jade.perm.flags" or "jade.admin":
+                        send formatted "%{prefix}% <tooltip:&eName: &c%{_p}%%nl%&eUUID: &c%{_uuid}%%nl%&eIP: &c%{_ip}%%nl%&ePing: &c%{_ping}%%nl%&eServer TPS: &c%{_tps}%%nl%%nl%&eSpeed: &c%{_distance}%%nl%&eLimit: &c%{_maxSpeed}%>&4%{_p}%<reset> &cmight be using <tooltip:&eMethod: &cSpeed A%nl%&7Compares player's movement speed to maximum allowed speed based on game physics and effects.%nl%&eAccuracy: &aHIGH%nl%%nl%&eVL: &c%{jade.db.player.%{_p}%.violations::"speedA"}%>&4Speed<reset>&c!" to loop-player
+
+                set {jade.db.player.%{_p}%.lastpos} to {_current}

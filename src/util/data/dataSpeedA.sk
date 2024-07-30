@@ -1,0 +1,7 @@
+function setMaxSpeedVehicle(p: player):
+    set {maxSpeed.tmp.%{_p}%} to 9999
+    wait 5 ticks
+    delete {maxSpeed.tmp.%{_p}%}
+
+function setLastPosJoin(p: player):
+    set {jade.db.player.%{_p}%.lastpos} to location of {_p}

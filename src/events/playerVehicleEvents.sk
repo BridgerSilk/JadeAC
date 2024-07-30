@@ -1,0 +1,5 @@
+on vehicle exit:
+    setMaxSpeedVehicle(player)
+
+on vehicle enter:
+    setMaxSpeedVehicle(player)
